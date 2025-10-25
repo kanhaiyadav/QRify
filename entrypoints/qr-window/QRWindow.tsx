@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import qrcode from 'qrcode-generator';
 import { FiDownload, FiCopy, FiAlertCircle } from 'react-icons/fi';
 import Button from '../components/button';
+import { getQRSettings, type QRSettings } from '../../utils/storageManager';
+import { drawCenterIcon, drawStyledQRCode } from '../../utils/qrStyler';
 
 type PayloadType = 'link' | 'text' | 'image' | 'video' | 'audio';
 
@@ -32,22 +34,32 @@ export default function QRWindow({ }: QRWindowProps) {
     const [error, setError] = useState<string | null>(null);
     const [copySuccess, setCopySuccess] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [qrSettings, setQrSettings] = useState<QRSettings | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     console.log('QRWindow component mounted');
 
     useEffect(() => {
-        console.log('QRWindow useEffect - parsing query params');
-        parseQueryParams();
-        setLoading(false);
+        console.log('QRWindow useEffect - loading settings and parsing query params');
+        const loadSettingsAndData = async () => {
+            try {
+                const settings = await getQRSettings();
+                setQrSettings(settings);
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+            }
+            parseQueryParams();
+            setLoading(false);
+        };
+        loadSettingsAndData();
     }, []);
 
     useEffect(() => {
-        console.log('QRWindow useEffect - rendering QR code', data);
-        if (data.content) {
+        console.log('QRWindow useEffect - rendering QR code', data, qrSettings);
+        if (data.content && qrSettings) {
             renderQRCode();
         }
-    }, [data]);
+    }, [data, qrSettings]);
 
     const parseQueryParams = () => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -83,9 +95,9 @@ export default function QRWindow({ }: QRWindowProps) {
         }
     };
 
-    const renderQRCode = () => {
+    const renderQRCode = async () => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        if (!canvas || !qrSettings) return;
 
         const normalized = data.content.trim();
         if (!normalized) {
@@ -99,33 +111,46 @@ export default function QRWindow({ }: QRWindowProps) {
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
 
-            const qr = qrcode(0, 'H');
+            const qr = qrcode(0, qrSettings.errorCorrectionLevel);
             qr.addData(normalized);
             qr.make();
 
             const moduleCount = qr.getModuleCount();
-            const cellSize = Math.floor(QR_SIZE / moduleCount);
+            const cellSize = Math.floor((qrSettings.size - qrSettings.margin * 2) / moduleCount);
             const qrSize = cellSize * moduleCount;
-            const margin = Math.floor((QR_SIZE - qrSize) / 2);
+            const offset = Math.floor((qrSettings.size - qrSize) / 2);
 
-            canvas.width = QR_SIZE;
-            canvas.height = QR_SIZE;
+            canvas.width = qrSettings.size;
+            canvas.height = qrSettings.size;
 
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, QR_SIZE, QR_SIZE);
+            // Draw background
+            ctx.fillStyle = qrSettings.backgroundColor;
+            ctx.fillRect(0, 0, qrSettings.size, qrSettings.size);
 
-            ctx.fillStyle = '#000000';
-            for (let row = 0; row < moduleCount; row += 1) {
-                for (let col = 0; col < moduleCount; col += 1) {
-                    if (qr.isDark(row, col)) {
-                        ctx.fillRect(
-                            margin + col * cellSize,
-                            margin + row * cellSize,
-                            cellSize,
-                            cellSize
-                        );
-                    }
-                }
+            // Draw QR code with styling
+            drawStyledQRCode(
+                ctx,
+                moduleCount,
+                (row, col) => qr.isDark(row, col),
+                cellSize,
+                offset,
+                qrSettings.dotsColor,
+                qrSettings.dotType,
+                qrSettings.cornerRadius
+            );
+
+            // Draw center icon if provided
+            if (qrSettings.centerIcon) {
+                await drawCenterIcon({
+                    canvas,
+                    iconBase64: qrSettings.centerIcon,
+                    size: 25,
+                    padding: 4,
+                    borderRadius: 4,
+                    backgroundType: qrSettings.iconBackgroundType,
+                    backgroundColor: qrSettings.iconBackgroundColor,
+                    backgroundBorderRadius: qrSettings.iconBorderRadius,
+                });
             }
         } catch (err) {
             console.error('Unable to render QR code:', err);
@@ -194,7 +219,7 @@ export default function QRWindow({ }: QRWindowProps) {
 
                 <div className="flex flex-col gap-2 px-6!">
                     {/* QR Code Display */}
-                    <div className="border border-primary border-dashed rounded-xl w-[280px] m-auto aspect-square flex items-center justify-center bg-accent">
+                    <div className="border border-primary border-dashed rounded-xl m-auto flex items-center justify-center bg-accent" style={{ width: `${qrSettings?.size}px`, height: `${qrSettings?.size}px` }}>
                         <canvas
                             ref={canvasRef}
                             className="rounded-lg shadow-md aspect-square w-[89%]! h-[89%]!"
@@ -210,7 +235,7 @@ export default function QRWindow({ }: QRWindowProps) {
                                 disabled={!data.content.trim()}
                                 className=" flex items-center gap-1 text-sm text-gray-300 hover:text-gray-200 disabled:opacity-50 px-2 py-1 hover:bg-accent rounded-sm"
                             >
-                                <FiCopy  />
+                                <FiCopy />
                                 <span>Copy</span>
                             </button>
                         </div>

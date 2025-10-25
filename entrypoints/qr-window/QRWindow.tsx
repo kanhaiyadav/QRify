@@ -207,7 +207,7 @@ export default function QRWindow({ }: QRWindowProps) {
         return (
             <div className="min-h-screen bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
                 <div className="text-white text-center">
-                    <div className="text-xl font-semibold mb-2">Loading QR Generator...</div>
+                    <div className="text-xl font-semibold mb-2">Loading QRify...</div>
                 </div>
             </div>
         );

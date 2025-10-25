@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import qrcode from 'qrcode-generator';
+import { FiDownload, FiCopy, FiAlertCircle, FiLink, FiSettings, FiExternalLink, FiRefreshCw } from 'react-icons/fi';
+import Button from '../components/button';
 
 interface QROptions {
     size: number;
@@ -12,6 +14,8 @@ interface QROptions {
 export default function App() {
     const [currentUrl, setCurrentUrl] = useState('');
     const [qrError, setQrError] = useState<string | null>(null);
+    const [copySuccess, setCopySuccess] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
     const [qrOptions, setQrOptions] = useState<QROptions>({
         size: 280,
         dotsColor: '#000000',
@@ -175,88 +179,106 @@ export default function App() {
     const copyToClipboard = async () => {
         try {
             await navigator.clipboard.writeText(currentUrl);
-            const btn = document.getElementById('copy-btn');
-            if (btn) {
-                const originalText = btn.textContent;
-                btn.textContent = '✓ Copied!';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                }, 2000);
-            }
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
         } catch (error) {
             console.error('Failed to copy:', error);
+            setQrError('Failed to copy URL');
         }
     };
 
     return (
-        <div className="w-full min-h-screen bg-linear-to-br from-purple-50 to-blue-50">
-            <div className="p-4">
-                <div className="mb-4">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-1 flex items-center gap-2">
-                        <span className="text-2xl">🔗</span> Quick QR Share
-                    </h1>
-                    <div className="bg-white rounded-lg p-2 mt-2 shadow-sm">
-                        <p className="text-xs text-gray-600 truncate" title={currentUrl}>
+        <div className="w-full min-h-screen bg-background">
+            <div className="p-6">
+                {/* Header */}
+                <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                        <img src="/icon/96.png" alt="" className='w-[30px]' />
+                        <h1 className="text-2xl font-bold text-foreground">QR Generator</h1>
+                    </div>
+                </div>
+
+                <div className='mt-6 mb-2'>
+                    <div className='w-full flex items-center justify-between'>
+                        <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Current Page</p>
+                        <button
+                            onClick={copyToClipboard}
+                            className={`flex items-center text-gray-300 justify-center gap-2 px-4 py-1 font-semibold rounded-lg text-sm transition-all active:scale-95 disabled:opacity-50 ${copySuccess
+                                ? 'text-green-500'
+                                : 'hover:bg-accent text-foreground'
+                                }`}
+                            disabled={!currentUrl}
+                        >
+                            <FiCopy />
+                            <span>{copySuccess ? 'Copied!' : 'Copy'}</span>
+                        </button>
+                    </div>
+                    <div className="bg-accent rounded-lg p-3 border border-primary/20">
+                        <p className="text-sm text-foreground break-all line-clamp-2 font-mono" title={currentUrl}>
                             {currentUrl || 'Loading...'}
                         </p>
                     </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-xl shadow-lg mb-4 flex justify-center">
+                {/* QR Code Display */}
+                <div className="flex justify-center p-4 bg-accent rounded-xl border-2 border-dashed border-primary/30">
                     <canvas
                         ref={canvasRef}
-                        className="rounded-lg"
+                        className="rounded-lg shadow-lg"
                         style={{ imageRendering: 'pixelated' }}
                     />
                 </div>
 
+                {/* Error Banner */}
                 {qrError && (
-                    <div className="mb-2">
-                        <p className="text-center text-sm text-red-500">{qrError}</p>
+                    <div className="flex items-center gap-3 p-3 bg-red-500/10 border-l-4 border-red-500 rounded-lg">
+                        <FiAlertCircle className="text-red-500 shrink-0 w-5 h-5" />
+                        <p className="text-sm text-red-400">{qrError}</p>
                     </div>
                 )}
 
-                <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                        <button
-                            onClick={() => downloadQR('png')}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all hover:shadow-md active:scale-95"
-                        >
-                            📥 PNG
-                        </button>
-                        <button
-                            onClick={() => downloadQR('svg')}
-                            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all hover:shadow-md active:scale-95"
-                        >
-                            📥 SVG
-                        </button>
-                    </div>
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-2 my-2">
+                    <button
+                        onClick={() => downloadQR('png')}
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground font-semibold rounded-lg text-sm transition-all hover:shadow-lg active:scale-95 disabled:opacity-50"
+                        disabled={!currentUrl}
+                    >
+                        <FiDownload className="w-4 h-4" />
+                        <span>PNG</span>
+                    </button>
+                    <button
+                        onClick={() => downloadQR('svg')}
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground font-semibold rounded-lg text-sm transition-all hover:shadow-lg active:scale-95 disabled:opacity-50"
+                        disabled={!currentUrl}
+                    >
+                        <FiDownload className="w-4 h-4" />
+                        <span>SVG</span>
+                    </button>
+                </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                        <button
-                            onClick={openInWindow}
-                            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all hover:shadow-md active:scale-95"
-                        >
-                            🪟 Window
-                        </button>
-                        <button
-                            id="copy-btn"
-                            onClick={copyToClipboard}
-                            className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all hover:shadow-md active:scale-95"
-                        >
-                            📋 Copy
-                        </button>
-                    </div>
+                {/* Settings Toggle */}
+                <button
+                    onClick={() => setShowSettings(!showSettings)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent hover:bg-accent/80 text-foreground rounded-lg text-sm font-medium transition-all border border-primary/20 hover:border-primary/40"
+                >
+                    <FiSettings className="w-4 h-4" />
+                    <span>{showSettings ? 'Hide' : 'Show'} Customization</span>
+                </button>
 
-                    <div className="border-t border-gray-200 pt-4">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                            🎨 Customize QR Code
+                {/* Customization Section */}
+                {showSettings && (
+                    <div className="bg-accent rounded-lg p-4 border border-primary/20 space-y-4 mt-2">
+                        <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                            <FiRefreshCw className="w-4 h-4" />
+                            Customize QR Code
                         </h3>
 
                         <div className="space-y-3">
+                            {/* Color Pickers */}
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                                    <label className="block text-xs font-medium text-gray-300 mb-2">
                                         Dots Color
                                     </label>
                                     <input
@@ -265,12 +287,12 @@ export default function App() {
                                         onChange={(e) =>
                                             setQrOptions({ ...qrOptions, dotsColor: e.target.value })
                                         }
-                                        className="w-full h-10 rounded-lg cursor-pointer border-2 border-gray-200"
+                                        className="w-full h-10 rounded-lg cursor-pointer border-2 border-primary/30 bg-accent"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                                    <label className="block text-xs font-medium text-gray-300 mb-2">
                                         Background
                                     </label>
                                     <input
@@ -282,16 +304,17 @@ export default function App() {
                                                 backgroundColor: e.target.value,
                                             })
                                         }
-                                        className="w-full h-10 rounded-lg cursor-pointer border-2 border-gray-200"
+                                        className="w-full h-10 rounded-lg cursor-pointer border-2 border-primary/30 bg-accent"
                                     />
                                 </div>
                             </div>
 
+                            {/* Size Slider */}
                             <div>
-                                <label className="flex text-xs font-medium text-gray-700 mb-1.5 justify-between">
-                                    <span>Size</span>
-                                    <span className="text-blue-600">{qrOptions.size}px</span>
-                                </label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-xs font-medium text-gray-300">Size</label>
+                                    <span className="text-xs font-semibold text-primary">{qrOptions.size}px</span>
+                                </div>
                                 <input
                                     type="range"
                                     min="200"
@@ -300,15 +323,16 @@ export default function App() {
                                     onChange={(e) =>
                                         setQrOptions({ ...qrOptions, size: parseInt(e.target.value, 10) })
                                     }
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    className="w-full h-2 bg-background border border-primary rounded-lg appearance-none cursor-pointer accent-primary"
                                 />
                             </div>
 
+                            {/* Margin Slider */}
                             <div>
-                                <label className="flex text-xs font-medium text-gray-700 mb-1.5 justify-between">
-                                    <span>Margin</span>
-                                    <span className="text-blue-600">{qrOptions.margin * 10}%</span>
-                                </label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="text-xs font-medium text-gray-300">Margin</label>
+                                    <span className="text-xs font-semibold text-primary">{qrOptions.margin * 10}%</span>
+                                </div>
                                 <input
                                     type="range"
                                     min="0"
@@ -317,19 +341,14 @@ export default function App() {
                                     onChange={(e) =>
                                         setQrOptions({ ...qrOptions, margin: parseInt(e.target.value, 10) })
                                     }
-                                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                    className="w-full h-2 bg-background border border-primary rounded-lg appearance-none cursor-pointer accent-primary"
                                 />
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
 
-                <div className="mt-4 text-center">
-                    <p className="text-xs text-gray-500">
-                        Right-click on any content to generate QR codes
-                    </p>
-                </div>
             </div>
-        </div>
+        </div >
     );
 }

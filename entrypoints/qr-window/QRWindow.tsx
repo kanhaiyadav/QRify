@@ -283,7 +283,7 @@ export default function QRWindow({ }: QRWindowProps) {
                                 className="underline font-medium text-muted-foreground hover:text-yellow-300"
                             >
                                 Rate Us!
-                            </a>!
+                            </a>
                         </span>
                         <BsDot size={20} className="text-muted-foreground" />
                         <span>

@@ -196,18 +196,35 @@ export default function App() {
 
     const openSettingsSidebar = async () => {
         try {
-            const currentTab = await new Promise<number>((resolve) => {
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    resolve(tabs[0]?.id || 0);
+            // Check if sidePanel API is available (Chrome only)
+            if (chrome.sidePanel && typeof chrome.sidePanel.open === 'function') {
+                const currentTab = await new Promise<number>((resolve) => {
+                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                        resolve(tabs[0]?.id || 0);
+                    });
                 });
-            });
 
-            if (currentTab) {
-                await chrome.sidePanel.open({ tabId: currentTab });
+                if (currentTab) {
+                    await chrome.sidePanel.open({ tabId: currentTab });
+                }
+            } else {
+                // Fallback for Firefox and other browsers: open in new window
+                chrome.windows.create({
+                    url: chrome.runtime.getURL('/sidebar.html'),
+                    type: 'popup',
+                    width: 398,
+                    height: 600,
+                });
             }
         } catch (error) {
             console.error('Failed to open settings sidebar:', error);
-            setQrError('Failed to open settings');
+            // Fallback if sidePanel fails
+            chrome.windows.create({
+                url: chrome.runtime.getURL('/sidebar.html'),
+                type: 'popup',
+                width: 398,
+                height: 600,
+            });
         }
     };
 
@@ -218,7 +235,7 @@ export default function App() {
             ),
             type: 'popup',
             width: 450,
-            height: 550,
+            height: 600,
         });
     };
 
@@ -300,7 +317,7 @@ export default function App() {
 
                 {/* Error Banner */}
                 {qrError && (
-                    <div className="flex items-center gap-3 p-3 bg-red-500/10 border-l-4 border-red-500 rounded-lg">
+                    <div className="flex items-center gap-3 p-3 bg-red-500/10 border-l-4 border-red-500 rounded-lg mt-2">
                         <FiAlertCircle className="text-red-500 shrink-0 w-5 h-5" />
                         <p className="text-sm text-red-400">{qrError}</p>
                     </div>
@@ -346,7 +363,7 @@ export default function App() {
                         className="underline font-medium text-muted-foreground hover:text-yellow-300"
                     >
                         Rate Us!
-                    </a>!
+                    </a>
                 </span>
                 <BsDot size={20} className="text-muted-foreground" />
                 <span>

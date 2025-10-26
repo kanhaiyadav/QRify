@@ -7,7 +7,7 @@ export default defineConfig({
         name: "QRify - Quick Mobile Syncing",
         description:
             "Generate QR codes for links, text, images, and media to quickly share with mobile devices",
-        version: "1.0.0",
+        version: "1.0.1",
         permissions: [
             "contextMenus",
             "activeTab",

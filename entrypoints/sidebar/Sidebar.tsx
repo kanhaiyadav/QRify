@@ -384,10 +384,10 @@ export default function Sidebar() {
                                 href="https://addons.mozilla.org/addon/qrify"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="underline font-medium text-muted-foreground hover:text-yellow-300"
+                                className="underline font-medium text-sm text-muted-foreground hover:text-yellow-300"
                             >
                                 Rate Us!
-                            </a>!
+                            </a>
                         </span>
                         <BsDot size={20} className="text-muted-foreground" />
                         <span>
@@ -396,7 +396,7 @@ export default function Sidebar() {
                                 href="https://ko-fi.com/Y8Y01N7HT2"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="underline font-medium text-muted-foreground hover:text-primary"
+                                className="underline text-sm font-medium text-muted-foreground hover:text-primary"
                             >
                                 Buy me a coffee
                             </a>

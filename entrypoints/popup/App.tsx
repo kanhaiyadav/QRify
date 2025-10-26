@@ -4,6 +4,9 @@ import { FiDownload, FiCopy, FiAlertCircle, FiExternalLink } from 'react-icons/f
 import { getQRSettings, saveQRSettings, fileToBase64, type QRSettings } from '../../utils/storageManager';
 import { drawCenterIcon, drawStyledQRCode } from '../../utils/qrStyler';
 import { CiSettings } from 'react-icons/ci';
+import { BiCoffee, BiStar } from 'react-icons/bi';
+import { BsDot } from 'react-icons/bs';
+import { CgCoffee } from 'react-icons/cg';
 
 export default function App() {
     const [currentUrl, setCurrentUrl] = useState('');
@@ -332,6 +335,31 @@ export default function App() {
                     <span>Open In New Window</span>
                 </button>
 
+            </div>
+            <div className='flex gap-1 items-center justify-center'>
+                <span>
+                    <BiStar size={15} className="inline mb-0.5 mr-1 text-yellow-400" />
+                    <a
+                        href="https://addons.mozilla.org/addon/qrify"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline font-medium text-muted-foreground hover:text-yellow-300"
+                    >
+                        Rate Us!
+                    </a>!
+                </span>
+                <BsDot size={20} className="text-muted-foreground" />
+                <span>
+                    <CgCoffee size={15} className='inline mr-1 text-primary' />
+                    <a
+                        href="https://ko-fi.com/Y8Y01N7HT2"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="underline font-medium text-muted-foreground hover:text-primary"
+                    >
+                        Buy me a coffee
+                    </a>
+                </span>
             </div>
         </div >
     );

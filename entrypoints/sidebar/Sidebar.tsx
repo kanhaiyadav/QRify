@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { FiSettings, FiRefreshCw, FiRotateCcw, FiTrash2 } from 'react-icons/fi';
 import { getQRSettings, saveQRSettings, resetQRSettings, fileToBase64, type QRSettings } from '../../utils/storageManager';
 import { CiSettings } from 'react-icons/ci';
+import { CgCoffee } from 'react-icons/cg';
+import { BsDot } from 'react-icons/bs';
+import { BiStar } from 'react-icons/bi';
 
 export default function Sidebar() {
     const [qrOptions, setQrOptions] = useState<QRSettings>({
@@ -120,7 +123,7 @@ export default function Sidebar() {
             )}
 
             {/* Settings Content */}
-            <div className="bg-accent flex-1 p-4 px-6 space-y-4">
+            <div className="bg-accent flex flex-col flex-1 p-4 px-6 space-y-4">
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                         <CiSettings size={22} />
@@ -135,7 +138,7 @@ export default function Sidebar() {
                     </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="flex flex-col gap-3 flex-1">
                     {/* Color Pickers */}
                     <div className="grid grid-cols-2 gap-3">
                         <div>
@@ -373,6 +376,31 @@ export default function Sidebar() {
                                 <p className="text-xs text-gray-500 mt-1">PNG, JPG (max 500KB)</p>
                             </div>
                         )}
+                    </div>
+                    <div className='flex gap-1 items-center justify-center mt-auto'>
+                        <span>
+                            <BiStar size={15} className="inline mb-0.5 mr-1 text-yellow-400" />
+                            <a
+                                href="https://addons.mozilla.org/addon/qrify"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline font-medium text-muted-foreground hover:text-yellow-300"
+                            >
+                                Rate Us!
+                            </a>!
+                        </span>
+                        <BsDot size={20} className="text-muted-foreground" />
+                        <span>
+                            <CgCoffee size={15} className='inline mr-1 text-primary' />
+                            <a
+                                href="https://ko-fi.com/Y8Y01N7HT2"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline font-medium text-muted-foreground hover:text-primary"
+                            >
+                                Buy me a coffee
+                            </a>
+                        </span>
                     </div>
                 </div>
             </div>

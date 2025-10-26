@@ -4,6 +4,9 @@ import { FiDownload, FiCopy, FiAlertCircle } from 'react-icons/fi';
 import Button from '../components/button';
 import { getQRSettings, type QRSettings } from '../../utils/storageManager';
 import { drawCenterIcon, drawStyledQRCode } from '../../utils/qrStyler';
+import { CgCoffee } from 'react-icons/cg';
+import { BsDot } from 'react-icons/bs';
+import { BiStar } from 'react-icons/bi';
 
 type PayloadType = 'link' | 'text' | 'image' | 'video' | 'audio';
 
@@ -269,6 +272,31 @@ export default function QRWindow({ }: QRWindowProps) {
                             <FiDownload className="w-5 h-5" />
                             <span>SVG</span>
                         </Button>
+                    </div>
+                    <div className='flex gap-1 items-center justify-center'>
+                        <span>
+                            <BiStar size={15} className="inline mb-0.5 mr-1 text-yellow-400" />
+                            <a
+                                href="https://addons.mozilla.org/addon/qrify"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline font-medium text-muted-foreground hover:text-yellow-300"
+                            >
+                                Rate Us!
+                            </a>!
+                        </span>
+                        <BsDot size={20} className="text-muted-foreground" />
+                        <span>
+                            <CgCoffee size={15} className='inline mr-1 text-primary' />
+                            <a
+                                href="https://ko-fi.com/Y8Y01N7HT2"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline font-medium text-muted-foreground hover:text-primary"
+                            >
+                                Buy me a coffee
+                            </a>
+                        </span>
                     </div>
                 </div>
             </div>

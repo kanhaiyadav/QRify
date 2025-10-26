@@ -6,6 +6,7 @@
     --color-primary: var(--primary);
     --color-primary-foreground: var(--primary-foreground);
     --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
 
     --background-image-linear-to-r: linear-gradient(
         to right,
@@ -22,6 +23,7 @@
     --background: #2b2b2b;
     --accent: #383838;
     --foreground: #ffffff;
+    --muted-foreground: #b0b0b0;
     --primary-foreground: #252525;
 }
 

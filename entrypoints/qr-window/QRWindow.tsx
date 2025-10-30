@@ -273,11 +273,11 @@ export default function QRWindow({ }: QRWindowProps) {
                             <span>SVG</span>
                         </Button>
                     </div>
-                    <div className='flex gap-1 items-center justify-center'>
+                    <div className='flex gap-1 items-center justify-center mt-4'>
                         <span>
                             <BiStar size={15} className="inline mb-0.5 mr-1 text-yellow-400" />
                             <a
-                                href="https://addons.mozilla.org/addon/qrify"
+                                href="https://microsoftedge.microsoft.com/addons/detail/qrify-quick-mobile-sync/ogmlmmmakklgmhnjcnekffjchoplomdb"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="underline font-medium text-muted-foreground hover:text-yellow-300"

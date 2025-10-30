@@ -381,7 +381,7 @@ export default function Sidebar() {
                         <span>
                             <BiStar size={15} className="inline mb-0.5 mr-1 text-yellow-400" />
                             <a
-                                href="https://addons.mozilla.org/addon/qrify"
+                                href="https://microsoftedge.microsoft.com/addons/detail/qrify-quick-mobile-sync/ogmlmmmakklgmhnjcnekffjchoplomdb"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="underline font-medium text-sm text-muted-foreground hover:text-yellow-300"

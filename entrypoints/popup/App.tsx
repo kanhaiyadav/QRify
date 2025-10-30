@@ -234,8 +234,8 @@ export default function App() {
                 `/qr-window.html?data=${encodeURIComponent(JSON.stringify({ type: 'link', content: currentUrl }))}`
             ),
             type: 'popup',
-            width: 450,
-            height: 600,
+            width: 398,
+            height: 550,
         });
     };
 
@@ -357,7 +357,7 @@ export default function App() {
                 <span>
                     <BiStar size={15} className="inline mb-0.5 mr-1 text-yellow-400" />
                     <a
-                        href="https://addons.mozilla.org/addon/qrify"
+                        href="https://microsoftedge.microsoft.com/addons/detail/qrify-quick-mobile-sync/ogmlmmmakklgmhnjcnekffjchoplomdb"
                         target="_blank"
                         rel="noreferrer"
                         className="underline font-medium text-muted-foreground hover:text-yellow-300"

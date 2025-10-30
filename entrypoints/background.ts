@@ -76,8 +76,8 @@ export default defineBackground(() => {
                 )}`
             ),
             type: "popup",
-            width: 400,
-            height: 500,
+            width: 398,
+            height: 550,
         });
     });
 });
